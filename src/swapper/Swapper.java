@@ -22,8 +22,12 @@ public class Swapper<E> {
         }
 
         try {
-            set.removeAll(removed);
-            set.addAll(added);
+            HashSet<E> temp = (HashSet<E>) set.clone();
+            temp.removeAll(removed);
+            temp.addAll(added);
+            if (Thread.interrupted())
+                throw new InterruptedException();
+            set = temp;
         } finally {
             setModified.signalAll();
             lock.unlock();
