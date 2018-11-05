@@ -22,7 +22,7 @@ public class Swapper<E> {
         }
 
         try {
-            HashSet<E> temp = (HashSet<E>) set.clone();
+            HashSet<E> temp = new HashSet<>(set);
             temp.removeAll(removed);
             temp.addAll(added);
             if (Thread.interrupted())
