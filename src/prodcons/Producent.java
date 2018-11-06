@@ -1,13 +1,15 @@
 package prodcons;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 
 public class Producent implements Runnable {
     private LinkedList<Integer> pool;
 
-    public Producent(HashSet<Integer> pool) {
-        this.pool = new LinkedList<>(pool);
+    public Producent(LinkedList<Integer> pool) {
+        Collections.shuffle(pool);
+        this.pool = pool;
     }
 
     private void produce(HashSet<Integer> products) throws InterruptedException {
