@@ -28,8 +28,8 @@ public class Swapper<E> {
             if (Thread.interrupted())
                 throw new InterruptedException();
             set = temp;
-        } finally {
             setModified.signalAll();
+        } finally {
             lock.unlock();
         }
     }
