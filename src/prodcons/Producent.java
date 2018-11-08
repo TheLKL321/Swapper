@@ -22,7 +22,7 @@ public class Producent implements Runnable {
             // TODO: multiple elements at once?
             while (!pool.isEmpty()){
                 HashSet<Integer> products = new HashSet<>();
-                products.add(pool.pop());
+                products.add(pool.remove());
                 produce(products);
             }
         } catch (InterruptedException e) {

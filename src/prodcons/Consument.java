@@ -13,6 +13,7 @@ public class Consument implements Runnable {
 
     private void consume() throws InterruptedException{
         Main.swapper.swap(myNumbers, new HashSet<>());
+        consumedCount++;
     }
 
     @Override
@@ -24,7 +25,7 @@ public class Consument implements Runnable {
         } catch (InterruptedException e){
             e.printStackTrace(); // TODO
         } finally {
-            System.out.println("Consument " + Thread.currentThread().getName() + "stopped consuming, consumed " + consumedCount);
+            System.out.println("Consument " + Thread.currentThread().getName() + " stopped consuming, consumed " + consumedCount);
         }
     }
 }

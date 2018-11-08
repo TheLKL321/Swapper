@@ -1,24 +1,44 @@
 package swapper;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 public class Swapper<E> {
-    private final ReentrantLock lock = new ReentrantLock(true);
-    private final Condition setModified = lock.newCondition();
+    private final Semaphore mutex = new Semaphore(1, true);
+    private HashMap<Long, Collection<E>> requirements;
+    private HashMap<Long, Semaphore> gates;
     private HashSet<E> set;
 
     public Swapper() {
         set = new HashSet<>();
+        gates = new HashMap<>();
+    }
+
+    private void openGate(){
+
     }
 
     public void swap(Collection<E> removed, Collection<E> added) throws InterruptedException {
-        lock.lock();
+        long id = Thread.currentThread().getId();
+        mutex.acquire();
 
-        while (!set.containsAll(removed)){
-            setModified.await();
+        while (!set.containsAll(removed)) {
+            Semaphore sem = new Semaphore(1);
+            sem.acquire();
+            requirements.put(id, removed);
+            gates.put(id, sem);
+            mutex.release();
+            try {
+                sem.acquire();
+            } finally {
+                requirements.remove(id);
+                gates.remove(id);
+            }
+            mutex.acquire();
         }
 
         try {
@@ -28,9 +48,9 @@ public class Swapper<E> {
             if (Thread.interrupted())
                 throw new InterruptedException();
             set = temp;
-            setModified.signalAll();
         } finally {
-            lock.unlock();
+            openGate();
+            mutex.release();
         }
     }
 }
