@@ -1,7 +1,5 @@
 package swapper;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,27 +14,33 @@ public class Swapper<E> {
     public Swapper() {
         set = new HashSet<>();
         gates = new HashMap<>();
+        requirements = new HashMap<>();
     }
 
     private void openGate(){
-
+        for (Long id : requirements.keySet()) {
+            if (set.containsAll(requirements.get(id))) {
+                gates.get(id).release();
+                return;
+            }
+        }
     }
 
     public void swap(Collection<E> removed, Collection<E> added) throws InterruptedException {
-        long id = Thread.currentThread().getId();
+        long currentId = Thread.currentThread().getId();
         mutex.acquire();
 
         while (!set.containsAll(removed)) {
             Semaphore sem = new Semaphore(1);
             sem.acquire();
-            requirements.put(id, removed);
-            gates.put(id, sem);
+            requirements.put(currentId, removed);
+            gates.put(currentId, sem);
             mutex.release();
             try {
                 sem.acquire();
             } finally {
-                requirements.remove(id);
-                gates.remove(id);
+                requirements.remove(currentId);
+                gates.remove(currentId);
             }
             mutex.acquire();
         }
