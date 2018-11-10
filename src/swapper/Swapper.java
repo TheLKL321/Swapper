@@ -17,20 +17,21 @@ public class Swapper<E> {
         requirements = new HashMap<>();
     }
 
-    private void openGate(){
+    private boolean openGate(){
         for (Long id : requirements.keySet()) {
             if (set.containsAll(requirements.get(id))) {
                 gates.get(id).release();
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     public void swap(Collection<E> removed, Collection<E> added) throws InterruptedException {
         long currentId = Thread.currentThread().getId();
         mutex.acquire();
 
-        while (!set.containsAll(removed)) {
+        if (!set.containsAll(removed)) {
             Semaphore sem = new Semaphore(1);
             sem.acquire();
             requirements.put(currentId, removed);
@@ -42,7 +43,6 @@ public class Swapper<E> {
                 requirements.remove(currentId);
                 gates.remove(currentId);
             }
-            mutex.acquire();
         }
 
         try {
@@ -53,8 +53,8 @@ public class Swapper<E> {
                 throw new InterruptedException();
             set = temp;
         } finally {
-            openGate();
-            mutex.release();
+            if (!openGate())
+                mutex.release();
         }
     }
 }
