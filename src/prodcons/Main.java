@@ -4,18 +4,58 @@ import swapper.Swapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Swapperphore sem = new Swapperphore(1);
-        try {
-            sem.acquire();
-            sem.release();
-        } catch (Exception e){
-            //shutup
-        }
-        System.out.println("done");
+    // Every one of $PRODUCERS producers creates $ORDER products
+    private static final int PRODUCERS = 10;
+    private static final int ORDER = 10;
+    // Every one of $CONSUMERS consumers reads $TO_CONSUME products
+    private static final int CONSUMERS = 5;
+    private static final int TO_CONSUME = (PRODUCERS * ORDER / CONSUMERS);
+
+    public static int readable = 0;
+    public static int writable = 0;
+
+    public static final char[] buffer = new char[10];
+
+    public static final Swapperphore consumerSwapperphore = new Swapperphore(0);
+    public static final Swapperphore producerSwapperphore = new Swapperphore(10);
+
+    private static final Swapper<Protection> protections = new Swapper<>();
+
+    public static void acquireProtection(Protection protection) throws InterruptedException {
+        HashSet<Protection> temp = new HashSet<>();
+        temp.add(protection);
+        protections.swap(temp, new HashSet<>());
     }
+
+    public static void releaseProtection(Protection protection) throws InterruptedException {
+        HashSet<Protection> temp = new HashSet<>();
+        temp.add(protection);
+        protections.swap(new HashSet<>(), temp);
+    }
+
+    public static void main(String args[]) {
+        try {
+            releaseProtection(Protection.CAN_CONSUME);
+            releaseProtection(Protection.CAN_PRODUCE);
+
+            List<Thread> threads = new ArrayList<>();
+            char[] products = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+            for (int i = 0; i < PRODUCERS; i++)
+                threads.add(new Thread(new Producer(products[i % products.length], ORDER), "Producer " + (i + 1)));
+
+            for (int i = 0; i < CONSUMERS; i++)
+                threads.add(new Thread(new Consumer(TO_CONSUME), "Konsument " + (i + 1)));
+
+            for (Thread t : threads)
+                t.start();
+
+        } catch (InterruptedException e){
+            System.err.println("Main thread interrupted before any new threads were created");
+        }
+    }
+
 }

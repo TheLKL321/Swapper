@@ -1,5 +1,6 @@
 package prodcons;
 
+import sun.awt.windows.ThemeReader;
 import swapper.Swapper;
 
 import java.util.HashSet;
@@ -15,7 +16,8 @@ public class Swapperphore {
         try {
             mutex.swap(new HashSet<>(), temp);
         } catch (InterruptedException e) {
-            System.err.println("Swapperphore failed to construct");
+            Thread.currentThread().interrupt();
+            System.err.println(Thread.currentThread().getName() + ": Swapperphore failed to construct");
         }
     }
 
