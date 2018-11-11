@@ -4,7 +4,6 @@ import swapper.Swapper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class Main {
 
@@ -35,7 +34,7 @@ public class Main {
             releaseProtection(Protection.CAN_CONSUME);
             releaseProtection(Protection.CAN_PRODUCE);
 
-            List<Thread> threads = new ArrayList<>();
+            ArrayList<Thread> threads = new ArrayList<>();
             char[] products = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
             for (int i = 0; i < PRODUCERS; i++)
                 threads.add(new Thread(new Producer(products[i % products.length], ORDER), "Producer " + (i + 1)));

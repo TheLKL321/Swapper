@@ -3,7 +3,7 @@ package readwrite;
 public class Writer implements Runnable {
     private final int id;
 
-    public Writer(int id) {
+    Writer(int id) {
         this.id = id;
     }
 
@@ -24,7 +24,9 @@ public class Writer implements Runnable {
             }
             Main.writerCount++;
             Main.releaseMutex();
+
             write();
+
             Main.acquireMutex();
             Main.writerCount--;
             if (Main.readersWaiting > 0)
@@ -33,6 +35,7 @@ public class Writer implements Runnable {
                 Main.writerSwapperphore.release();
             else
                 Main.releaseMutex();
+
         } catch (InterruptedException e){
             Thread.currentThread().interrupt();
             System.err.println(Thread.currentThread().getName() + " was interrupted");

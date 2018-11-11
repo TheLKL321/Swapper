@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Reader implements Runnable {
     private final int toRead;
 
-    public Reader(int toRead) {
+    Reader(int toRead) {
         this.toRead = toRead;
     }
 
@@ -14,7 +14,7 @@ public class Reader implements Runnable {
         for (int i = 0; i < 19; i++)
             result &= Main.book[i] == Main.book[i + 1];
         System.out.println(Thread.currentThread().getName() + ": " + Arrays.toString(Main.book) +
-                "Iteration: " + iteration + " Book uncorrupted: " + result);
+                " Iteration: " + iteration + " Book uncorrupted: " + result);
     }
 
     @Override
@@ -33,10 +33,12 @@ public class Reader implements Runnable {
                     Main.readerSwapperphore.release();
                 else
                     Main.releaseMutex();
-                read(i);
+
+                read(i + 1);
+
                 Main.acquireMutex();
                 Main.readerCount--;
-                if ((Main.readerCount == 0) && (Main.writersWaiting > 0))
+                if (Main.readerCount == 0 && Main.writersWaiting > 0)
                     Main.writerSwapperphore.release();
                 else
                     Main.releaseMutex();
