@@ -1,6 +1,5 @@
 package prodcons;
 
-import sun.awt.windows.ThemeReader;
 import swapper.Swapper;
 
 import java.util.HashSet;

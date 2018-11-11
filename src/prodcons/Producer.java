@@ -4,7 +4,7 @@ public class Producer implements Runnable {
     private int order;
     private char product;
 
-    public Producer(char product, int order) {
+    Producer(char product, int order) {
         this.product = product;
         this.order = order;
     }

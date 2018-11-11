@@ -8,7 +8,7 @@ public class Consumer implements Runnable {
     private HashSet<Character> consumed = new HashSet<>();
     private HashMap<Character, Integer> counters = new HashMap<>();
 
-    public Consumer(int toConsume) {
+    Consumer(int toConsume) {
         this.toConsume = toConsume;
     }
 

@@ -15,23 +15,23 @@ public class Main {
     private static final int CONSUMERS = 5;
     private static final int TO_CONSUME = (PRODUCERS * ORDER / CONSUMERS);
 
-    public static int readable = 0;
-    public static int writable = 0;
+    static int readable = 0;
+    static int writable = 0;
 
-    public static final char[] buffer = new char[10];
+    static final char[] buffer = new char[10];
 
-    public static final Swapperphore consumerSwapperphore = new Swapperphore(0);
-    public static final Swapperphore producerSwapperphore = new Swapperphore(10);
+    static final Swapperphore consumerSwapperphore = new Swapperphore(0);
+    static final Swapperphore producerSwapperphore = new Swapperphore(10);
 
     private static final Swapper<Protection> protections = new Swapper<>();
 
-    public static void acquireProtection(Protection protection) throws InterruptedException {
+    static void acquireProtection(Protection protection) throws InterruptedException {
         HashSet<Protection> temp = new HashSet<>();
         temp.add(protection);
         protections.swap(temp, new HashSet<>());
     }
 
-    public static void releaseProtection(Protection protection) throws InterruptedException {
+    static void releaseProtection(Protection protection) throws InterruptedException {
         HashSet<Protection> temp = new HashSet<>();
         temp.add(protection);
         protections.swap(new HashSet<>(), temp);
