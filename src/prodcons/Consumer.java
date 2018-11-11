@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Consumer implements Runnable {
-    private int toConsume;
+    private final int toConsume;
     private HashSet<Character> consumed = new HashSet<>();
     private HashMap<Character, Integer> counters = new HashMap<>();
 

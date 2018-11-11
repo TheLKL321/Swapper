@@ -9,20 +9,13 @@ import java.util.List;
 public class Main {
 
     // Every one of $PRODUCERS producers creates $ORDER products
-    private static final int PRODUCERS = 10;
-    private static final int ORDER = 10;
+    private static final int PRODUCERS = 10, ORDER = 10;
     // Every one of $CONSUMERS consumers reads $TO_CONSUME products
-    private static final int CONSUMERS = 5;
-    private static final int TO_CONSUME = (PRODUCERS * ORDER / CONSUMERS);
+    private static final int CONSUMERS = 5, TO_CONSUME = (PRODUCERS * ORDER / CONSUMERS);
 
-    static int readable = 0;
-    static int writable = 0;
-
+    static int readable = 0, writable = 0;
     static final char[] buffer = new char[10];
-
-    static final Swapperphore consumerSwapperphore = new Swapperphore(0);
-    static final Swapperphore producerSwapperphore = new Swapperphore(10);
-
+    static final Swapperphore consumerSwapperphore = new Swapperphore(0), producerSwapperphore = new Swapperphore(10);
     private static final Swapper<Protection> protections = new Swapper<>();
 
     static void acquireProtection(Protection protection) throws InterruptedException {
@@ -48,7 +41,7 @@ public class Main {
                 threads.add(new Thread(new Producer(products[i % products.length], ORDER), "Producer " + (i + 1)));
 
             for (int i = 0; i < CONSUMERS; i++)
-                threads.add(new Thread(new Consumer(TO_CONSUME), "Konsument " + (i + 1)));
+                threads.add(new Thread(new Consumer(TO_CONSUME), "Consumer " + (i + 1)));
 
             for (Thread t : threads)
                 t.start();

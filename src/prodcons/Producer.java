@@ -1,8 +1,8 @@
 package prodcons;
 
 public class Producer implements Runnable {
-    private int order;
-    private char product;
+    private final int order;
+    private final char product;
 
     Producer(char product, int order) {
         this.product = product;
