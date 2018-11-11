@@ -32,8 +32,7 @@ public class Swapper<E> {
         mutex.acquire();
 
         if (!set.containsAll(removed)) {
-            Semaphore sem = new Semaphore(1);
-            sem.acquire();
+            Semaphore sem = new Semaphore(0);
             requirements.put(currentId, removed);
             gates.put(currentId, sem);
             mutex.release();
