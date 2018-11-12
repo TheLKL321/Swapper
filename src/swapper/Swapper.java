@@ -39,10 +39,15 @@ public class Swapper<E> {
             mutex.release();
             try {
                 sem.acquire();
-            } finally {
+            } catch (InterruptedException e){
+                mutex.acquire();
                 requirements.remove(currentId);
                 gates.remove(currentId);
+                mutex.release();
+                throw new InterruptedException();
             }
+            requirements.remove(currentId);
+            gates.remove(currentId);
         }
 
         try {
