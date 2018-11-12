@@ -4,11 +4,12 @@ import swapper.Swapper;
 
 import java.util.HashSet;
 
-public class Swapperphore {
+// Semaphore implementation using only Swapper as a synchronization mechanism
+class Swapperphore {
     private Swapper<Boolean> mutex = new Swapper<>(), delay = new Swapper<>();
     private int n;
 
-    public Swapperphore(int n) {
+    Swapperphore(int n) {
         this.n = n;
         HashSet<Boolean> temp = new HashSet<>();
         temp.add(true);
@@ -32,7 +33,7 @@ public class Swapperphore {
         mutex.swap(new HashSet<>(), temp);
     }
 
-    public void acquire() throws InterruptedException {
+    void acquire() throws InterruptedException {
         mutexAcquire(mutex);
         n--;
         if (n <= -1){
@@ -42,7 +43,7 @@ public class Swapperphore {
         mutexRelease(mutex);
     }
 
-    public void release() throws InterruptedException {
+    void release() throws InterruptedException {
         mutexAcquire(mutex);
         n++;
         if (n <= 0)

@@ -12,10 +12,10 @@ public class Main {
     // Every one of $CONSUMERS consumers reads $TO_CONSUME products
     private static final int CONSUMERS = 5, TO_CONSUME = (PRODUCERS * ORDER / CONSUMERS);
 
-    static int readable = 0, writable = 0;
+    static int readable = 0, writable = 0; // indexes in buffer
     static final char[] buffer = new char[10];
     static final Swapperphore consumerSwapperphore = new Swapperphore(0), producerSwapperphore = new Swapperphore(10);
-    private static final Swapper<Protection> protections = new Swapper<>();
+    private static final Swapper<Protection> protections = new Swapper<>(); // acts as two mutexes
 
     static void acquireProtection(Protection protection) throws InterruptedException {
         HashSet<Protection> temp = new HashSet<>();

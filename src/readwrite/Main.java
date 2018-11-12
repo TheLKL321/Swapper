@@ -5,6 +5,7 @@ import swapper.Swapper;
 import java.util.HashSet;
 
 public class Main {
+
     // Every one of $WRITERS writers fills the book with their id once
     private static final int WRITERS = 5;
     // Every one of $READERS readers reads the book $TIMES_READ times

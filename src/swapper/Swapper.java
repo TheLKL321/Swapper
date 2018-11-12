@@ -17,6 +17,7 @@ public class Swapper<E> {
         requirements = new HashMap<>();
     }
 
+    // Wakes up a thread that is now permitted to change the set and returns true. If no threads are permitted, returns false
     private boolean openGate(){
         for (Long id : requirements.keySet()) {
             if (set.containsAll(requirements.get(id))) {

@@ -13,6 +13,7 @@ public class Reader implements Runnable {
         boolean result = true;
         for (int i = 0; i < 19; i++)
             result &= Main.book[i] == Main.book[i + 1];
+
         System.out.println(Thread.currentThread().getName() + ": " + Arrays.toString(Main.book) +
                 " Iteration: " + iteration + " Book uncorrupted: " + result);
     }
