@@ -1,24 +1,48 @@
 package swapper;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.Semaphore;
 
 public class Swapper<E> {
-    private final ReentrantLock lock = new ReentrantLock(true);
-    private final Condition setModified = lock.newCondition();
+    private final Semaphore mutex = new Semaphore(1, true);
+    private HashMap<Long, Collection<E>> requirements;
+    private HashMap<Long, Semaphore> gates;
     private HashSet<E> set;
 
     public Swapper() {
         set = new HashSet<>();
+        gates = new HashMap<>();
+        requirements = new HashMap<>();
+    }
+
+    // Wakes up a thread that is now permitted to change the set and returns true. If no threads are permitted, returns false
+    private boolean openGate(){
+        for (Long id : requirements.keySet()) {
+            if (set.containsAll(requirements.get(id))) {
+                gates.get(id).release();
+                return true;
+            }
+        }
+        return false;
     }
 
     public void swap(Collection<E> removed, Collection<E> added) throws InterruptedException {
-        lock.lock();
+        long currentId = Thread.currentThread().getId();
+        mutex.acquire();
 
-        while (!set.containsAll(removed)){
-            setModified.await();
+        if (!set.containsAll(removed)) {
+            Semaphore sem = new Semaphore(0);
+            requirements.put(currentId, removed);
+            gates.put(currentId, sem);
+            mutex.release();
+            try {
+                sem.acquire();
+            } finally {
+                requirements.remove(currentId);
+                gates.remove(currentId);
+            }
         }
 
         try {
@@ -28,9 +52,9 @@ public class Swapper<E> {
             if (Thread.interrupted())
                 throw new InterruptedException();
             set = temp;
-            setModified.signalAll();
         } finally {
-            lock.unlock();
+            if (!openGate())
+                mutex.release();
         }
     }
 }
